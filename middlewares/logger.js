@@ -1,4 +1,5 @@
 /* eslint-disable linebreak-style */
+/* eslint-disable linebreak-style */
 const winston = require('winston');
 const expressWinston = require('express-winston');
 
