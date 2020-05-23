@@ -17,4 +17,4 @@ node_modules
 *.env
 *.package-lock.json
 
-.jwt_secret.env
+*.jwt_secret.env
