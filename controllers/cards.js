@@ -21,10 +21,11 @@ module.exports.createCard = (req, res, next) => {
   card
     .create({ name, link, owner })
     .then((cards) => res.send({ data: cards }))
-    .catch(() => {
-      const err = new BadRequestError('Не возможно создать карточку');
-      return next(err);
-    });
+    .catch(next);
+  // .catch(() => {
+  //   const err = new BadRequestError('Не возможно создать карточку');
+  //   return next(err);
+  // });
 };
 module.exports.deleteCard = (req, res, next) => {
   card
@@ -40,7 +41,9 @@ module.exports.deleteCard = (req, res, next) => {
       if (req.user._id === owner.toString()) {
         return card.findByIdAndRemove(req.params.id);
       }
-      const err = new BadRequestError('Чтобы удалить карточку,вам необходимо быть её владельцем');
+      const err = new BadRequestError(
+        'Чтобы удалить карточку,вам необходимо быть её владельцем',
+      );
       return next(err);
     })
     .then((user) => {

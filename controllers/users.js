@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const user = require('../models/users');
-const { BadRequestError } = require('../constructorError/error');
+// const { BadRequestError } = require('../constructorError/error');
 const { BadAuthenticationError } = require('../constructorError/error');
 const { IdNotFoundError } = require('../constructorError/error');
 
@@ -12,12 +12,13 @@ module.exports.getUsers = (req, res, next) => {
   user
     .find({})
     .then((users) => res.send({ data: users }))
-    .catch(() => {
-      const err = new BadRequestError(
-        `Пользователя с id: ${req.params.id} не существует`,
-      );
-      return next(err);
-    });
+    .catch(next);
+  // .catch(() => {
+  //   const err = new BadRequestError(
+  //     `Пользователя с id: ${req.params.id} не существует`,
+  //   );
+  //   return next(err);
+  // });
 };
 
 // eslint-disable-next-line consistent-return
@@ -41,12 +42,13 @@ module.exports.createUser = (req, res, next) => {
       })
       .then((newUser) => user.findOne({ _id: newUser._id }))
       .then((newUser) => res.status(200).send(newUser))
-      .catch(() => {
-        const err = new BadRequestError(
-          'Не удалось создать пользователя.',
-        );
-        return next(err);
-      });
+      .catch(next);
+    // .catch(() => {
+    //   const err = new BadRequestError(
+    //     'Не удалось создать пользователя.',
+    //   );
+    //   return next(err);
+    // });
   });
 };
 
@@ -74,7 +76,8 @@ module.exports.updateUser = (req, res, next) => {
     .findByIdAndUpdate(
       req.params.id,
       {
-        name, about,
+        name,
+        about,
       },
       {
         new: true, // обработчик then получит на вход обновлённую запись
@@ -83,30 +86,35 @@ module.exports.updateUser = (req, res, next) => {
       },
     )
     .then((updUser) => res.send({ data: updUser }))
-    .catch(() => {
-      const err = new BadRequestError(
-        `Обновление пользователя с id: ${req.params.id} невозможно`,
-      );
-      return next(err);
-    });
+    // .catch(() => {
+    //   const err = new BadRequestError(
+    //     `Обновление пользователя с id: ${req.params.id} невозможно`,
+    //   );
+    //   return next(err);
+    // });
+    .catch(next);
 };
 
 module.exports.updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
   user
-    .findByIdAndUpdate(req.params._id, { avatar },
+    .findByIdAndUpdate(
+      req.params._id,
+      { avatar },
       {
         new: true, // обработчик then получит на вход обновлённую запись
         runValidators: true, // данные будут валидированы перед изменением
         upsert: true, // если пользователь не найден, он будет создан
-      })
+      },
+    )
     .then((updAvatar) => res.send({ data: updAvatar }))
-    .catch(() => {
-      const err = new BadRequestError(
-        `Обновление аватара с id: ${req.params.id} невозможно`,
-      );
-      return next(err);
-    });
+    .catch(next);
+  // .catch(() => {
+  //   const err = new BadRequestError(
+  //     `Обновление аватара с id: ${req.params.id} невозможно`,
+  //   );
+  //   return next(err);
+  // });
 };
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;

@@ -3,13 +3,13 @@
 class BadRequestError extends Error {
   constructor(message) {
     super(message);
-    this.statusCode = 400;
+    this.statusCode = 401;
   }
 }
 class BadAuthenticationError extends Error {
   constructor(message) {
     super(message);
-    this.statusCode = 401;
+    this.statusCode = 403;
   }
 }
 class IdNotFoundError extends Error {
