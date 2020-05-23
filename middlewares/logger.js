@@ -1,6 +1,6 @@
 /* eslint-disable linebreak-style */
 /* eslint-disable linebreak-style */
-const winston = require('winston');
+const winston = require('winston'); // собираем логи запросов и ошибок на сервере
 const expressWinston = require('express-winston');
 
 const requestLogger = expressWinston.logger({ // логгер запросов
@@ -10,10 +10,9 @@ const requestLogger = expressWinston.logger({ // логгер запросов
   format: winston.format.json(),
 });
 
-const errorLogger = expressWinston.logger({
+const errorLogger = expressWinston.errorLogger({
   transports: [
-    new winston.transports.File({ filename: 'error.log' }),
-  ],
+    new winston.transports.File({ filename: 'error.log' })],
   format: winston.format.json(),
 });
 
