@@ -6,11 +6,13 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const { celebrate, Joi, errors } = require('celebrate');
+const validator = require('validator');
 const routerCards = require('./routes/cards');
 const routerUsers = require('./routes/users');
 const { createUser, login } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const { errorLogger, requestLogger } = require('./middlewares/logger');
+
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -44,14 +46,16 @@ app.post(
         email: Joi.string().required().email(),
         password: Joi.string().required().min(8),
         name: Joi.string().required().min(2).max(30),
-        // age: Joi.number().integer().required().min(18),
-        avatar: Joi.string().required().regex(
-          /http(s)?:\/\/?(([0-9]{0,3}\.[0-5]{0,3}\.[0-5]{0,3}\.)([0-2]?[0-5]?[0-5]?)|(www.)?\w+(\.|\/)+[A-Za-z]{2,})(:6[0-5]{1,4})?(:[1-5][0-9]{1,4}|:[0-9]{2,4})?#?/,
-        ),
+        avatar: Joi.string()
+          .required().custom((value, helpers) => {
+            if (!validator.isURL(value)) {
+              return helpers.message('avatar is not url');
+            }
+            return value;
+          }),
 
         about: Joi.string().required().min(2).max(30),
-      })
-      .unknown(true),
+      }),
   }),
   createUser,
 );
