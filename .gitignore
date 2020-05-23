@@ -14,5 +14,7 @@ node_modules
 .DS_Store
 .idea
 .vscode
-.env
-.package-lock.json
+*.env
+*.package-lock.json
+
+.jwt_secret.env
