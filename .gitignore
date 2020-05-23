@@ -16,5 +16,4 @@ node_modules
 .vscode
 *.env
 *package-lock.json
-
-*jwt_secret.env
+jwt_secret.env
