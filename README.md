@@ -1,6 +1,8 @@
-# MestoWithAuthentication
-## Backend part for service for uploading photos with authentication
+# MestoForDeploy
+## Service for uploading photos with authentication
 Версия 1.0.0 https://github.com/AleksandrHexlet/MestoWithAuthentication
+IP 84.201.130.3
+Domain https://fotoshare.tk
 RUS
 
 Для развертывания проекта локально необходимо:
