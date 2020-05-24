@@ -11,8 +11,8 @@ router.get(
     body: Joi.object()
       .keys({
         id: Joi.string().alphanum().length(24),
-      })
-      .unknown(true),
+      }),
+    // .unknown(true),
   }),
   getUsersByID,
 );
