@@ -1,12 +1,31 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
+const validator = require('validator');
 
 const {
   getCards, createCard, deleteCard, dislikeCard, likeCard,
 } = require('../controllers/cards');
 
 router.get('/cards', getCards);
-router.post('/cards', createCard);
+router.post(
+  '/cards',
+  celebrate({
+    body: Joi.object().keys({
+      name: Joi.string().required().min(2).max(30),
+      link: Joi.string()
+        .required()
+        .custom((value, helpers) => {
+          if (!validator.isURL(value)) {
+            return helpers.message('avatar is not url');
+          }
+          return value;
+        }),
+
+      about: Joi.string().required().min(2).max(30),
+    }),
+  }),
+  createCard,
+);
 router.delete('/cards/:id', celebrate({
   params: Joi.object().keys({
     id: Joi.string().alphanum().length(24),

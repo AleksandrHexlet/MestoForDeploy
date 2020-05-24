@@ -1,17 +1,19 @@
 /* eslint-disable no-unused-vars */
+const validator = require('validator');
 const card = require('../models/cards');
 const { BadRequestError } = require('../constructorError/error');
-const { IdNotFoundError } = require('../constructorError/error');
+const { IdNotFoundError, AccessDenied } = require('../constructorError/error');
 
 
 module.exports.getCards = (req, res, next) => {
   card
     .find({})
     .then((cards) => res.send({ data: cards }))
-    .catch(() => {
-      const err = new BadRequestError(`Карточки с id: ${req.params.cardId} не существуют`);
-      return next(err);
-    });
+    .catch(next);
+  // .catch(() => {
+  //   const err = new BadRequestError(`Карточки с id: ${req.params.cardId} не существуют`);
+  //   return next(err);
+  // });
 };
 
 module.exports.createCard = (req, res, next) => {
@@ -36,12 +38,14 @@ module.exports.deleteCard = (req, res, next) => {
         const { owner } = cardWithId;
         return owner;
       }
+      const err = new IdNotFoundError(`Карточки с id: ${req.params.id} не существует`);
+      return next(err);
     })
     .then((owner) => {
       if (req.user._id === owner.toString()) {
         return card.findByIdAndRemove(req.params.id);
       }
-      const err = new BadRequestError(
+      const err = new AccessDenied(
         'Чтобы удалить карточку,вам необходимо быть её владельцем',
       );
       return next(err);
@@ -51,10 +55,7 @@ module.exports.deleteCard = (req, res, next) => {
         res.send({ data: user });
       }
     })
-    .catch(() => {
-      const err = new BadRequestError(`Карточки с id: ${req.params.id} не существует`);
-      return next(err);
-    });
+    .catch(next);
 };
 
 module.exports.likeCard = (req, res, next) => {

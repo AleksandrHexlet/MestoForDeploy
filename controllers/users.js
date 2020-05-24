@@ -4,30 +4,25 @@ const user = require('../models/users');
 // const { BadRequestError } = require('../constructorError/error');
 const { BadAuthenticationError } = require('../constructorError/error');
 const { IdNotFoundError } = require('../constructorError/error');
+const { JWT_SECRET } = require("../config");
 
-
-const { NODE_ENV, JWT_SECRET } = process.env;
+const { NODE_ENV } = process.env;
 
 module.exports.getUsers = (req, res, next) => {
   user
     .find({})
     .then((users) => res.send({ data: users }))
     .catch(next);
-  // .catch(() => {
-  //   const err = new BadRequestError(
-  //     `Пользователя с id: ${req.params.id} не существует`,
-  //   );
-  //   return next(err);
-  // });
+    // .catch(() => {
+    //   const err = new BadRequestError(
+    //     `Пользователя с id: ${req.params.id} не существует`,
+    //   );
+    //   return next(err);
+    // });
 };
 
 // eslint-disable-next-line consistent-return
 module.exports.createUser = (req, res, next) => {
-  if (req.body.password.length <= 8) {
-    return res
-      .status(404)
-      .send({ message: 'Пароль должен быть более 8 символов' });
-  }
   const {
     name, about, avatar, email, password,
   } = req.body;
@@ -74,7 +69,7 @@ module.exports.updateUser = (req, res, next) => {
   const { name, about } = req.body;
   user
     .findByIdAndUpdate(
-      req.params.id,
+      req.user._id,
       {
         name,
         about,
@@ -99,7 +94,7 @@ module.exports.updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
   user
     .findByIdAndUpdate(
-      req.params._id,
+      req.user._id,
       { avatar },
       {
         new: true, // обработчик then получит на вход обновлённую запись

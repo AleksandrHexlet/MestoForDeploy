@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
+const validator = require('validator');
 const {
   getUsers, getUsersByID, updateUser, updateAvatar,
 } = require('../controllers/users');
@@ -18,7 +19,7 @@ router.get(
 router.get('/users', getUsers);
 
 router.patch(
-  '/users/:id',
+  '/users/me',
   celebrate({
     body: Joi.object()
       .keys({
@@ -32,15 +33,18 @@ router.patch(
 );
 
 router.patch(
-  '/users/:id/:avatar',
+  '/users/me/avatar',
   celebrate({
     body: Joi.object()
       .keys({
         avatar: Joi.string()
           .required()
-          .regex(
-            /http(s)?:\/\/?(([0-9]{0,3}\.[0-5]{0,3}\.[0-5]{0,3}\.)([0-2]?[0-5]?[0-5]?)|(www.)?\w+(\.|\/)+[A-Za-z]{2,})(:6[0-5]{1,4})?(:[1-5][0-9]{1,4}|:[0-9]{2,4})?#?/,
-          ),
+          .custom((value, helpers) => {
+            if (!validator.isURL(value)) {
+              return helpers.message('avatar is not url');
+            }
+            return value;
+          }),
       })
       .unknown(true),
   }),
