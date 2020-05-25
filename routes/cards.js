@@ -16,12 +16,12 @@ router.post(
         .required()
         .custom((value, helpers) => {
           if (!validator.isURL(value)) {
-            return helpers.message('avatar is not url');
+            return helpers.message('link is not url');
           }
           return value;
         }),
 
-      about: Joi.string().required().min(2).max(30),
+      about: Joi.string().min(2).max(30),
     }),
   }),
   createCard,
